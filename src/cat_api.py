@@ -1,37 +1,49 @@
+import json
+import logging
+from typing import Tuple, Dict
 import requests
 
-class CatAPI:
-    """
-    Class for CatAPI 
-    """
-    def check_api_connection(link:str):
-        """
-        Function to check API connection
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
-        Args:
-        link: Link as string
+# Get a logger instance for the module
+logger = logging.getLogger(__name__)
 
-        Returns:
-        status_code: Connection status code 
-        """
-        status = requests.get(link).status_code
-        return status
 
-    def fetch_api_data(link:str):
-        """
-        Function to fetch API data
+class CatFact:
+    def __init__(self):
+        self.base_url = "https://meowfacts.herokuapp.com/"
 
-        Args:
-        link: Link as string
+    def _fetch_data(self, url) -> requests.models.Response:
+        return requests.get(url)
 
-        Returns:
-        fetched link data.
-        """
-        return requests.get(link).content
+    def get_cat_fact(self) -> Dict[str, any]:
+        try:
+            response = self._fetch_data(self.base_url)
+            if response.status_code in (200, 201):
+                return {
+                    "status_code": response.status_code,
+                    "response": response.json(),
+                }
+            else:
+                return {
+                    "status_code": response.status_code,
+                    "response": {"ERROR": "Cat Fact Not Available"},
+                }
+        except requests.exceptions.RequestException as err:
+            return {
+                "status_code": None,
+                "response": {"ERROR": "Request Exception occurred"},
+            }
 
-def main(link:str):
-    print(f"Link status: {CatAPI.check_api_connection(link)}")
-    print(f"Data:\n {CatAPI.fetch_api_data(link)}")
+
+def main():
+    cat_fact = CatFact()
+    response = cat_fact.get_cat_fact()
+    print(response)
+
 
 if __name__ == "__main__":
-    main("https://http.cat/101")
+    main()
