@@ -6,20 +6,20 @@ class CatAPI:
     """
     def check_api_connection(link:str):
         """
-        Function to check link status
+        Function to check API connection
 
         Args:
         link: Link as string
 
         Returns:
-        status_code: Link status code 
+        status_code: Connection status code 
         """
         status = requests.get(link).status_code
         return status
 
     def fetch_api_data(link:str):
         """
-        Function to fetch data
+        Function to fetch API data
 
         Args:
         link: Link as string
